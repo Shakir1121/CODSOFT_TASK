@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To Do List Application</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+    <h1>To Do List</h1>
+    <input type="text" id="taskInput" placeholder="Add a new task">
+    <button onclick="addTask()" class="addtask_btn">Add Task</button>
+    <ul id="taskList"></ul>
+</div>
+    <script>
+        
+        function addTask() {
+            var taskInput = document.getElementById("taskInput");
+            var taskList = document.getElementById("taskList");
+            var taskText = taskInput.value;
+
+            if (taskText.trim() !== "") {
+                var li = document.createElement("li");
+                li.innerHTML = taskText + ' <button onclick="editTask(this)">Edit</button> <button onclick="deleteTask(this)">Delete</button>';
+                taskList.appendChild(li);
+                taskInput.value = "";
+                updateLocalStorage();
+            }
+        }
+
+        function editTask(element) {
+            var newText = prompt("Edit task:", element.parentElement.firstChild.textContent);
+            if (newText !== null) {
+                element.parentElement.firstChild.textContent = newText;
+                updateLocalStorage();
+            }
+        }
+
+        function deleteTask(element) {
+            element.parentElement.remove();
+            updateLocalStorage();
+        }
+
+        function updateLocalStorage() {
+            var tasks = [];
+            var taskList = document.getElementById("taskList").children;
+            for (var i = 0; i < taskList.length; i++) {
+                tasks.push(taskList[i].textContent);
+            }
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        function loadTasks() {
+            var taskList = document.getElementById("taskList");
+            var tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+            tasks.forEach(function(taskText) {
+                var li = document.createElement("li");
+                li.innerHTML = taskText + ' <button onclick="editTask(this)">Edit</button> <button onclick="deleteTask(this)">Delete</button>';
+                taskList.appendChild(li);
+            });
+        }
+
+        window.onload = loadTasks;
+    </script>
+</body>
+</html>
